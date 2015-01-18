@@ -66,10 +66,6 @@
                 childrenOfTarget[i].style.left = e.offsetX + 'px';
                 childrenOfTarget[i].style.opacity = 1;
                 childrenOfTarget[i].style.visibility = 'visible';
-                /*childrenOfTarget[i].className = childrenOfTarget[i].className.replace(' hidden', '');
-                setTimeout(function () {
-                    childrenOfTarget[i].style.opacity = 1;
-                }, 0);*/
                 return false
             }
         }
@@ -83,7 +79,6 @@
                 if (childrenOfTarget[i].className === "menuWrapper") {
                     childrenOfTarget[i].style.opacity = 0;
                     childrenOfTarget[i].style.visibility = 'hidden';
-                    //childrenOfTarget[i].className = childrenOfTarget[i].className + ' hidden';
                 }
             }
         }
