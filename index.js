@@ -1,5 +1,4 @@
 (function() {
-    //commit with updated file
     // add event function
     var addEvent, removeEvent;
     if (document.addEventListener) {
@@ -62,10 +61,15 @@
     ContextMenu.prototype.showMenu = function(e) {
         var childrenOfTarget = e.target.children;
         for (var i = 0; i < childrenOfTarget.length; i++) {
-            if (childrenOfTarget[i].className === "menuWrapper hidden") {
+            if (childrenOfTarget[i].className === "menuWrapper") {
                 childrenOfTarget[i].style.top = e.offsetY + 'px';
                 childrenOfTarget[i].style.left = e.offsetX + 'px';
-                childrenOfTarget[i].className = childrenOfTarget[i].className.replace(' hidden', '');
+                childrenOfTarget[i].style.opacity = 1;
+                childrenOfTarget[i].style.visibility = 'visible';
+                /*childrenOfTarget[i].className = childrenOfTarget[i].className.replace(' hidden', '');
+                setTimeout(function () {
+                    childrenOfTarget[i].style.opacity = 1;
+                }, 0);*/
                 return false
             }
         }
@@ -77,14 +81,15 @@
         if (childrenOfTarget) {
             for (var i = 0; i < childrenOfTarget.length; i++) {
                 if (childrenOfTarget[i].className === "menuWrapper") {
-                    childrenOfTarget[i].className = childrenOfTarget[i].className + ' hidden';
+                    childrenOfTarget[i].style.opacity = 0;
+                    childrenOfTarget[i].style.visibility = 'hidden';
+                    //childrenOfTarget[i].className = childrenOfTarget[i].className + ' hidden';
                 }
             }
         }
     };
 
     onready(function() {
-
         var fields = document.getElementsByClassName('field');
         for (var i = 0; i < fields.length; i++) {
             var menu;
@@ -139,6 +144,7 @@
                     });
                     // append menu to target
                     e.target.appendChild(menu.createMenu(e, menu.settings.menuItems));
+
                 } else {
                     menu.hideMenu(e);
                     menu.showMenu(e);
