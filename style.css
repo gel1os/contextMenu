@@ -54,6 +54,7 @@
     cursor: pointer;
     padding-left: 10px;
     position: relative;
+    border-radius: 6px;
 }
 
 .blue .item:hover {
