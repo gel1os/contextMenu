@@ -1,4 +1,4 @@
-(function () {
+(function() {
     //commit with updated file
     // add event function
     var addEvent, removeEvent;
@@ -32,68 +32,36 @@
         this.settings = settings;
     };
 
-    // create Menu function
-    ContextMenu.prototype.createMenu = function (e) {
-        var mainItems = this.settings.menuItems,
-            subMenuItems = this.settings.subMenus,
-            itemsLength = mainItems.length,
-            menuHeight = this.settings.heightOfMenu,
-            menuWrapper = document.createElement('div'),
-            item,
-            subItem,
-            subItemWrapper,
-            matchedSubMenuArr = [],
-            clickedField = e.target;
+    ContextMenu.prototype.createMenu = function(e, structure) {
+        var itemHeight = this.settings.heightOfItem,
+            wrapper = document.createElement('div'),
+            menuItemNode;
+        wrapper.className = 'menuWrapper';
+        wrapper.style.top = e.offsetY + 'px';
+        wrapper.style.left = e.offsetX + 'px';
 
-        // create wrapper for items
-        menuWrapper.className = 'menuWrapper';
-        menuWrapper.style.height = menuHeight + 'px';
-        menuWrapper.style.top = e.offsetY + 'px';
-        menuWrapper.style.left = e.offsetX + 'px';
+        for (var i = 0; i < structure.length; i += 1) {
+            menuItemNode = document.createElement('div');
+            menuItemNode.innerText = structure[i].title;
+            menuItemNode.className = 'item';
+            menuItemNode.style.height = itemHeight + "px";
+            menuItemNode.style.lineHeight = itemHeight + "px";
 
-        // generate items and subItems
-        for (var i=0; i<mainItems.length; i++) {
-            // create item
-            item = document.createElement('div');
-            item.className = 'item ' + mainItems[i].toLowerCase().replace(/\s/g, '');
-            item.innerText = mainItems[i];
-            item.style.height = Math.floor(100 / itemsLength) + "%";
-
-            // check if item has subItems
-            if (subMenuItems[mainItems[i]]) {
-                // create wrapper for subItems
-                    matchedSubMenuArr = subMenuItems[mainItems[i]];
-                    subItemWrapper = document.createElement('div');
-                    subItemWrapper.className = 'subItemWrapper';
-                for (var j=0; j < matchedSubMenuArr.length; j++) {
-                    // create subItem
-                    subItem = document.createElement('div');
-                    subItem.className = 'item subItem ' + matchedSubMenuArr[j].toLowerCase().replace(/\s/g, '');
-                    subItem.innerText = matchedSubMenuArr[j];
-                    subItem.style.height = Math.floor(100 / itemsLength) + "%";
-                    subItemWrapper.appendChild(subItem);
-                }
-                item.appendChild(subItemWrapper);
-                item.className += ' hasSubItem';
+            if (structure[i].submenu) {
+                menuItemNode.className += ' hasSubmenu';
+                menuItemNode.appendChild(this.createMenu(e, structure[i].submenu));
+            } else {
+                menuItemNode.addEventListener('click', structure[i].handler, false);
             }
-            menuWrapper.appendChild(item);
-            this.created = true;
+            wrapper.appendChild(menuItemNode);
         }
-
-        clickedField.appendChild(menuWrapper);
-
-        // set lineHeight for div.item
-        var allItemsDivs = document.getElementsByClassName('item'),
-            itemsHeight = getComputedStyle(allItemsDivs[0]).height;
-        for (var j=0; j<allItemsDivs.length; j++) {
-            allItemsDivs[j].style.lineHeight = itemsHeight;
-        }
+        return wrapper;
     };
 
     // showMenu function
-    ContextMenu.prototype.showMenu = function (e) {
+    ContextMenu.prototype.showMenu = function(e) {
         var childrenOfTarget = e.target.children;
-        for (var i=0; i<childrenOfTarget.length; i++) {
+        for (var i = 0; i < childrenOfTarget.length; i++) {
             if (childrenOfTarget[i].className === "menuWrapper hidden") {
                 childrenOfTarget[i].style.top = e.offsetY + 'px';
                 childrenOfTarget[i].style.left = e.offsetX + 'px';
@@ -104,10 +72,10 @@
     };
 
     // hideMenu function
-    ContextMenu.prototype.hideMenu = function (e) {
+    ContextMenu.prototype.hideMenu = function(e) {
         var childrenOfTarget = e.target.children;
         if (childrenOfTarget) {
-            for (var i=0; i<childrenOfTarget.length; i++) {
+            for (var i = 0; i < childrenOfTarget.length; i++) {
                 if (childrenOfTarget[i].className === "menuWrapper") {
                     childrenOfTarget[i].className = childrenOfTarget[i].className + ' hidden';
                 }
@@ -115,34 +83,10 @@
         }
     };
 
-    // add handlers to menu items
-    ContextMenu.prototype.addHandlers = function (e) {
-        var childrenOfTarget = e.target.children,
-            node = null;
-        if (childrenOfTarget) {
-            for (var i=0; i<childrenOfTarget.length; i++) {
-                if (childrenOfTarget[i].className === "menuWrapper") {
-                    node = childrenOfTarget[i];
-                    break
-                }
-            }
-        }
-
-        addEvent(node.getElementsByClassName('reload')[0], 'click', function () {
-            location.reload();
-        });
-
-        addEvent(node.getElementsByClassName('viewpagesource')[0], 'click', function () {
-            window.open("view-source:" + window.location.href, '_blank');
-            window.focus();
-        });
-
-    };
-
-    onready(function () {
+    onready(function() {
 
         var fields = document.getElementsByClassName('field');
-        for (var i=0; i<fields.length; i++) {
+        for (var i = 0; i < fields.length; i++) {
             var menu;
             // add contextmenu event
             addEvent(fields[i], "contextmenu", function(e) {
@@ -150,17 +94,51 @@
                 var childrenOfTarget = e.target.children;
                 if (childrenOfTarget.length === 0) {
                     menu = new ContextMenu({
-                        "menuItems": ['Reload', 'Save As', "Share", "View Page Source", 'Inspect Element'],
-                        "subMenus": {
-                            "Share": ["E-mail", "Facebook", 'Twitter', 'Whatsapp']
-                        },
-                        'subSubMenus': [
-                            ['E-mail', ['Favourites', 'Contacts', "Mom"]]
-                        ],
-                        'heightOfMenu' : 150
+                        "menuItems": [{
+                            title: 'Reload',
+                            handler: function() {
+                                location.reload();
+                            }
+                        }, {
+                            title: 'Save As',
+                            handler: function() {
+                                console.log('edit content')
+                            }
+                        }, {
+                            title: 'Share',
+                            submenu: [{
+                                title: 'Facebook',
+                                handler: function() {
+                                    console.log('skyped')
+                                }
+                            }, {
+                                title: 'Twitter',
+                                handler: function() {}
+                            },
+
+                                {
+                                    title: 'E-mail',
+                                    submenu: [{
+                                        title: "Favourites"
+                                    }, {
+                                        title: "Contacts"
+                                    }, {
+                                        title: "Mom"
+                                    }]
+                                }
+                            ]
+                        }, {
+                            title: 'View Page Source',
+                            handler: function() {
+                                window.open("view-source:" + window.location.href, '_blank');
+                                window.focus();
+                            }
+                        }],
+                        'heightOfMenu': 150,
+                        'heightOfItem': 35
                     });
-                    menu.createMenu(e);
-                    menu.addHandlers(e);
+                    // append menu to target
+                    e.target.appendChild(menu.createMenu(e, menu.settings.menuItems));
                 } else {
                     menu.hideMenu(e);
                     menu.showMenu(e);
@@ -168,7 +146,7 @@
             });
 
             // add click on field
-            addEvent(fields[i], 'click', function (e) {
+            addEvent(fields[i], 'click', function(e) {
                 if (menu) {
                     menu.hideMenu(e);
                 }

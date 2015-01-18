@@ -59,7 +59,7 @@
     background: rgba(250, 248, 85, 0.6)
 }
 
-.subItemWrapper {
+.subMenuWrapper {
     left: 100%;
     top: 0;
     z-index: 2;
@@ -70,20 +70,25 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.5)
 }
 
-.subItem {
+div.item.hasSubmenu > .menuWrapper {
     display: none;
 }
 
-.item:hover .subItem {
+div.item.hasSubmenu:hover > .menuWrapper {
     display: block;
 }
 
-.blue .subItemWrapper {
+div.item.hasSubmenu > .menuWrapper {
+    left: 100% !important;
+    top: 0 !important;
+}
+
+.blue .subMenuWrapper {
     color: rgba(250, 248, 85, 0.75);
     background: rgba(167, 175, 208, 0.56);
 }
 
-.yellow .subItemWrapper {
+.yellow .subMenuWrapper {
     color: rgba(70, 121, 189, 0.86);
     background: rgba(167, 175, 208, 0.56);
 }
