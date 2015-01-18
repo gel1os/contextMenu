@@ -1,4 +1,5 @@
 (function () {
+    //commit with updated file
     // add event function
     var addEvent, removeEvent;
     if (document.addEventListener) {
